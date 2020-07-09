@@ -1,9 +1,11 @@
-from skimage import io
+from PIL import Image
 from matplotlib import pyplot
 from mtcnn import MTCNN
 from numpy import asarray
+from skimage import io
+
 from util import constant
-from PIL import Image
+
 
 class MTCnnDetector:
 

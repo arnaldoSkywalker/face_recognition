@@ -9,7 +9,6 @@ to be able to predict or recognize faces.
 __author__ = "Arnaldo Perez Castano"
 
 from dataset.yaleFaceDataSet import YaleFaceDataSet
-
 # Config
 from face_detection.mtcnn_detector import MTCnnDetector
 from face_recognition.model.convolutionalModel import ConvolutionalModel
@@ -17,25 +16,25 @@ from face_recognition.model.vggModel import VggModel
 from util import constant
 
 # Face detector
-face_detector = MTCnnDetector('C://Users//pyc//Pictures/_TLI9039 - Copy.jpg')
+
+face_detector = MTCnnDetector(constant.CELEBRITY_VGG_PATH)
 resized_faces = face_detector.process_image()
 
-# VggFace Recognition
-vgg = VggModel()
-vgg.predict(resized_faces[0])
-
-exec_face_recog = False
-if exec_face_recog:
-    ext_list = ['gif', 'centerlight', 'glasses', 'happy', 'sad', 'leflight',
+ext_list = ['gif', 'centerlight', 'glasses', 'happy', 'sad', 'leflight',
             'wink', 'noglasses', 'normal', 'sleepy', 'surprised', 'rightlight']
 
-    # Set up dataSet
-    dataSet = YaleFaceDataSet(constant.FACE_DATA_PATH, ext_list)
-    dataSet.get_data()
+# Set up dataSet
+dataSet = YaleFaceDataSet(constant.FACE_DATA_PATH, ext_list)
 
-    # Create Convolutional NN
+
+exec_conv_model = False
+if exec_conv_model:
+    dataSet.get_data()
     cnn = ConvolutionalModel(dataSet)
     cnn.train()
-    print('Training completed ...')
     cnn.evaluate()
-
+else:
+    dataSet.get_data(keras_img_processing=True)
+    vgg = VggModel(dataSet)
+    vgg.train()
+    vgg.evaluate()

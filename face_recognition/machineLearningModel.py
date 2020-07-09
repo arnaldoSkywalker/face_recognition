@@ -23,3 +23,12 @@ class MLModel(metaclass=abc.ABCMeta):
     @abstractmethod
     def predict(self, object):
         pass
+
+    @abstractmethod
+    def evaluate(self):
+        score = self.get_model().evaluate(self.obj_validation, self.labels_validation, verbose=0)
+        print("%s: %.2f%%" % (self.get_model().metrics_names[1], score[1] * 100))
+
+    @abstractmethod
+    def get_model(self):
+        pass

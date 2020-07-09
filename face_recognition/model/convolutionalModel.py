@@ -1,7 +1,6 @@
 import numpy
 from tensorflow.python.keras.layers import Convolution2D, Activation, MaxPooling2D, Dropout, Flatten, Dense
 from tensorflow.python.keras.models import Sequential
-from tensorflow.python.keras.optimizer_v2.gradient_descent import SGD
 
 from face_recognition.machineLearningModel import MLModel
 from util import constant
@@ -15,6 +14,9 @@ class ConvolutionalModel(MLModel):
             raise Exception("DataSet is required in this model")
         self.shape = numpy.array([constant.IMG_WIDTH, constant.IMG_HEIGHT, 1])
         super().__init__(dataSet)
+        self.cnn.compile(loss=constant.LOSS_FUNCTION,
+                         optimizer=Common.get_sgd_optimizer(),
+                         metrics=[constant.METRIC_ACCURACY])
 
     def init_model(self):
         self.cnn = Sequential()
@@ -41,16 +43,13 @@ class ConvolutionalModel(MLModel):
         self.cnn.add(Activation(constant.SOFTMAX_ACTIVATION_FUNCTION))
         self.cnn.summary()
 
-    def train(self, n_epochs=50, batch=32):
-        self.cnn.compile(loss=constant.LOSS_FUNCTION,
-                         optimizer=self.__get_optimizer(),
-                         metrics=[constant.METRIC_ACCURACY])
+    def train(self, n_epochs=20, batch=32):
         self.cnn.fit(self.objects, self.labels,
                        batch_size=batch,
                        epochs=n_epochs, shuffle=True)
 
-    def __get_optimizer(self):
-        return SGD(lr=0.01, decay=1e-65, momentum=0.92, nesterov=True)
+    def get_model(self):
+        return self.cnn
 
     def predict(self, image):
         image = Common.to_float(image)
@@ -60,5 +59,4 @@ class ConvolutionalModel(MLModel):
         return result[0]
 
     def evaluate(self):
-        score = self.cnn.evaluate(self.obj_validation, self.labels_validation, verbose=0)
-        print("%s: %.2f%%" % (self.cnn.metrics_names[1], score[1] * 100))
+       super(ConvolutionalModel, self).evaluate()
