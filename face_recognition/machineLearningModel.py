@@ -10,6 +10,7 @@ class MLModel(metaclass=abc.ABCMeta):
             self.obj_validation = dataSet.obj_validation
             self.labels_validation = dataSet.labels_validation
             self.number_labels = dataSet.number_labels
+            self.n_classes = dataSet.n_classes
         self.init_model()
 
     @abstractmethod

@@ -16,22 +16,20 @@ from face_recognition.model.vggModel import VggModel
 from util import constant
 
 # Face detector
-
 face_detector = MTCnnDetector(constant.CELEBRITY_VGG_PATH)
 resized_faces = face_detector.process_image()
 
 ext_list = ['gif', 'centerlight', 'glasses', 'happy', 'sad', 'leflight',
             'wink', 'noglasses', 'normal', 'sleepy', 'surprised', 'rightlight']
-
+n_classes = 15
 # Set up dataSet
-dataSet = YaleFaceDataSet(constant.FACE_DATA_PATH, ext_list)
+dataSet = YaleFaceDataSet(constant.FACE_DATA_PATH, ext_list, n_classes)
 
-
-exec_conv_model = False
+exec_conv_model = True
 if exec_conv_model:
     dataSet.get_data()
     cnn = ConvolutionalModel(dataSet)
-    cnn.train()
+    cnn.train(n_epochs=50)
     cnn.evaluate()
 else:
     dataSet.get_data(keras_img_processing=True)

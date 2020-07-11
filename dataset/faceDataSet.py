@@ -16,9 +16,10 @@ from util.common import Common
 
 class FaceDataSet(metaclass=abc.ABCMeta):
 
-    def __init__(self, path,  extension_list):
+    def __init__(self, path,  extension_list, n_classes):
         self.path = path
         self.ext_list = extension_list
+        self.n_classes = n_classes
         self.objects = []
         self.labels = []
         self.obj_validation = []
@@ -38,17 +39,16 @@ class FaceDataSet(metaclass=abc.ABCMeta):
     def process_data(self, keras_img_processing):
         self.objects, self.img_obj_validation, self.labels, self.img_labels_validation = \
             self.split_training_set()
-        self.labels = np_utils.to_categorical(self.labels, self.number_labels)
-        self.labels_validation = np_utils.to_categorical(self.img_labels_validation, self.number_labels)
+        self.labels = np_utils.to_categorical(self.labels, self.n_classes)
+        self.labels_validation = np_utils.to_categorical(self.img_labels_validation, self.n_classes)
 
         if keras_img_processing:
             objs = numpy.empty((len(self.labels), constant.IMG_WIDTH, constant.IMG_HEIGHT, 3))
-            self.obj_validation = numpy.empty((len(self.labels_validation), constant.IMG_WIDTH, constant.IMG_HEIGHT, 3))
+            self.obj_validation = Common.to_float(numpy.empty((len(self.labels_validation),
+                                                               constant.IMG_WIDTH, constant.IMG_HEIGHT, 3)))
             for o in self.objects:
-                numpy.append(objs, o)
-            for o in self.img_obj_validation:
                 numpy.append(self.obj_validation, o)
-            self.objects = objs
+            self.objects = Common.to_float(objs)
         else:
             self.objects = Common.reshape_transform_data(self.objects)
             self.obj_validation = Common.reshape_transform_data(self.img_obj_validation)
@@ -66,7 +66,7 @@ class FaceDataSet(metaclass=abc.ABCMeta):
                     image = Common.reshape_from_img(image)
                     image = preprocess_input(image)
                 else:
-                    image = io.imread(img_abs_path, as_gray=True)
+                    image = io.imread(img_abs_path, as_gray=False)
                 label = self.process_label(img_path)
                 images.append(image)
                 labels.append(label)

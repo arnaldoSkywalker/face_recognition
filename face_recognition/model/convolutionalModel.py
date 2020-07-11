@@ -20,7 +20,6 @@ class ConvolutionalModel(MLModel):
 
     def init_model(self):
         self.cnn = Sequential()
-
         self.cnn.add(Convolution2D(32, 3, padding=constant.PADDING_SAME, input_shape=self.shape))
         self.cnn.add(Activation(constant.RELU_ACTIVATION_FUNCTION))
         self.cnn.add(Convolution2D(32, 3, 3))
@@ -39,7 +38,7 @@ class ConvolutionalModel(MLModel):
         self.cnn.add(Dense(constant.NUMBER_FULLY_CONNECTED))
         self.cnn.add(Activation(constant.RELU_ACTIVATION_FUNCTION))
         self.cnn.add(Dropout(constant.DROP_OUT_0_50))
-        self.cnn.add(Dense(self.number_labels))
+        self.cnn.add(Dense(self.n_classes))
         self.cnn.add(Activation(constant.SOFTMAX_ACTIVATION_FUNCTION))
         self.cnn.summary()
 
