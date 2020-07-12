@@ -28,7 +28,7 @@ class FaceDataSet(metaclass=abc.ABCMeta):
 
     def get_data(self, vgg_img_processing=False):
         img_path_list = os.listdir(self.path)
-        self.objects, self.labels = self.fetch_img_path(img_path_list, self.path, keras_img_processing)
+        self.objects, self.labels = self.fetch_img_path(img_path_list, self.path, vgg_img_processing)
         self.process_data(vgg_img_processing)
         self.print_dataSet()
 

@@ -32,7 +32,7 @@ if exec_conv_model:
     cnn.train(n_epochs=50)
     cnn.evaluate()
 else:
-    dataSet.get_data(keras_img_processing=True)
+    dataSet.get_data(vgg_img_processing=True)
     vgg = VggModel(dataSet)
     vgg.train(batch=20)
     vgg.evaluate()
