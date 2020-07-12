@@ -18,7 +18,7 @@ class Common:
 
     @staticmethod
     def reshape_from_img(image):
-        return image.reshape((1, image.shape[0], image.shape[1], image.shape[2]))
+        return image.reshape((constant.IMG_WIDTH, constant.IMG_HEIGHT, 3))
 
     @staticmethod
     def to_float(value):

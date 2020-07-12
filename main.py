@@ -24,8 +24,13 @@ ext_list = ['gif', 'centerlight', 'glasses', 'happy', 'sad', 'leflight',
 n_classes = 15
 # Set up dataSet
 dataSet = YaleFaceDataSet(constant.FACE_DATA_PATH, ext_list, n_classes)
+dataSet2 = YaleFaceDataSet(constant.FACE_DATA_PATH, ext_list, n_classes)
+dataSet.get_data()
+dataSet2.get_data(keras_img_processing=True)
+cnn2 = ConvolutionalModel(dataSet)
+vgg2 = VggModel(dataSet2)
 
-exec_conv_model = True
+exec_conv_model = False
 if exec_conv_model:
     dataSet.get_data()
     cnn = ConvolutionalModel(dataSet)
@@ -34,5 +39,5 @@ if exec_conv_model:
 else:
     dataSet.get_data(keras_img_processing=True)
     vgg = VggModel(dataSet)
-    vgg.train()
+    vgg.train(batch=20)
     vgg.evaluate()

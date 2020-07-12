@@ -1,3 +1,4 @@
+import keras
 from keras.preprocessing import image
 from keras_vggface.utils import decode_predictions
 from keras_vggface.utils import preprocess_input
@@ -5,45 +6,40 @@ from numpy import expand_dims
 from tensorflow.python.keras import Input
 from tensorflow.python.keras.applications.inception_v3 import preprocess_input
 from tensorflow.python.keras.applications.vgg16 import VGG16
-from tensorflow.python.keras.layers import MaxPooling2D, Dense, Flatten, Dropout, Convolution2D
+from tensorflow.python.keras.layers import MaxPooling2D, Dense, Flatten, Convolution2D
 from tensorflow.python.keras.models import Model
 
 from face_recognition.machineLearningModel import MLModel
 from util import constant
-from util.common import Common
 
 
 class VggModel(MLModel):
 
     def __init__(self, dataSet=None):
         super().__init__(dataSet)
-        self.vgg.compile(loss=constant.LOSS_FUNCTION,
-                         optimizer=Common.get_sgd_optimizer(),
+        opt = keras.optimizers.Adam(learning_rate=0.001)
+        self.vgg.compile(loss=keras.losses.binary_crossentropy,
+                         optimizer=opt,
                          metrics=[constant.METRIC_ACCURACY])
 
     def init_model(self):
         base_model = VGG16(weights=constant.IMAGENET, include_top=False,
                            input_tensor=Input(shape=(constant.IMG_WIDTH,
-                           constant.IMG_HEIGHT, 3)))
+                           constant.IMG_HEIGHT, 3)), pooling='max', classes=15)
         base_model.summary()
 
-        layer_dict = dict([(layer.name, layer) for layer in base_model.layers])
-        x = layer_dict['block2_pool'].output
+        for layer in base_model.layers:
+                layer.trainable = False
 
+        x = base_model.get_layer('block5_pool').output
         # Stacking a new simple convolutional network on top of it
-        x = Convolution2D(64, 3, padding=constant.PADDING_SAME)(x)
+        x = Convolution2D(64, 3)(x)
         x = MaxPooling2D(pool_size=(2, 2))(x)
         x = Flatten()(x)
         x = Dense(constant.NUMBER_FULLY_CONNECTED, activation=constant.RELU_ACTIVATION_FUNCTION)(x)
-        x = Dropout(constant.DROP_OUT_O_25)(x)
         x = Dense(self.n_classes, activation=constant.SOFTMAX_ACTIVATION_FUNCTION)(x)
 
         self.vgg = Model(inputs=base_model.input, outputs=x)
-
-        for layer in self.vgg.layers:
-            if layer.name in layer_dict:
-                layer.trainable = False
-
         self.vgg.summary()
 
     def get_model(self):

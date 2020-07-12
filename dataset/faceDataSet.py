@@ -7,7 +7,7 @@ import numpy
 from keras_preprocessing.image import load_img, img_to_array
 from skimage import io
 from sklearn.model_selection import train_test_split
-from tensorflow.python.keras.applications.inception_v3 import preprocess_input
+from tensorflow.python.keras.applications.vgg16 import preprocess_input
 from tensorflow.python.keras.utils import np_utils
 
 from util import constant
@@ -36,19 +36,15 @@ class FaceDataSet(metaclass=abc.ABCMeta):
         return train_test_split(self.objects, self.labels, test_size=0.3,
                                 random_state=random.randint(0, 100))
 
-    def process_data(self, keras_img_processing):
+    def process_data(self, vgg_img_processing):
         self.objects, self.img_obj_validation, self.labels, self.img_labels_validation = \
             self.split_training_set()
         self.labels = np_utils.to_categorical(self.labels, self.n_classes)
         self.labels_validation = np_utils.to_categorical(self.img_labels_validation, self.n_classes)
 
-        if keras_img_processing:
-            objs = numpy.empty((len(self.labels), constant.IMG_WIDTH, constant.IMG_HEIGHT, 3))
-            self.obj_validation = Common.to_float(numpy.empty((len(self.labels_validation),
-                                                               constant.IMG_WIDTH, constant.IMG_HEIGHT, 3)))
-            for o in self.objects:
-                numpy.append(self.obj_validation, o)
-            self.objects = Common.to_float(objs)
+        if vgg_img_processing:
+            self.obj_validation = Common.to_float(numpy.asarray(self.obj_validation, dtype= numpy.float32))
+            self.objects = Common.to_float(numpy.asarray(self.objects, dtype= numpy.float32))
         else:
             self.objects = Common.reshape_transform_data(self.objects)
             self.obj_validation = Common.reshape_transform_data(self.img_obj_validation)
