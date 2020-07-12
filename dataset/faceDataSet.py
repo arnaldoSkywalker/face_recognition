@@ -26,10 +26,10 @@ class FaceDataSet(metaclass=abc.ABCMeta):
         self.labels_validation = []
         self.number_labels = 0
 
-    def get_data(self, keras_img_processing=False):
+    def get_data(self, vgg_img_processing=False):
         img_path_list = os.listdir(self.path)
         self.objects, self.labels = self.fetch_img_path(img_path_list, self.path, keras_img_processing)
-        self.process_data(keras_img_processing)
+        self.process_data(vgg_img_processing)
         self.print_dataSet()
 
     def split_training_set(self):
