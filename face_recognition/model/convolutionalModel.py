@@ -52,10 +52,9 @@ class ConvolutionalModel(MLModel):
 
     def predict(self, image):
         image = Common.to_float(image)
-        result = self.model.predict_proba(image)
+        result = self.cnn.predict(image)
         print(result)
-        result = self.model.predict_classes(image)
-        return result[0]
+
 
     def evaluate(self):
        super(ConvolutionalModel, self).evaluate()
