@@ -8,6 +8,8 @@ to be able to predict or recognize faces.
 
 __author__ = "Arnaldo Perez Castano"
 
+import numpy as np
+
 from dataset.yaleFaceDataSet import YaleFaceDataSet
 # Config
 from face_detection.mtcnn_detector import MTCnnDetector
@@ -25,12 +27,13 @@ n_classes = 15
 # Set up dataSet
 dataSet = YaleFaceDataSet(constant.FACE_DATA_PATH, ext_list, n_classes)
 
-exec_conv_model = False
+exec_conv_model = True
 if exec_conv_model:
     dataSet.get_data()
     cnn = ConvolutionalModel(dataSet)
     cnn.train(n_epochs=50)
     cnn.evaluate()
+    cnn.predict(np.expand_dims(dataSet.objects[1], axis=0))
 else:
     dataSet.get_data(vgg_img_processing=True)
     vgg = VggModel(dataSet)
