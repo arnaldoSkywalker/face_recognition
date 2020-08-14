@@ -1,7 +1,7 @@
 # face_recognition
 Face Recognition, face detection sample app using Tensorflow 2, Keras, pre-trained VGGFace models
 
-This sample app which is explained in detail in a series of articles published in CodeProject.com incorporate the following components:
+This sample app which is explained in detail in a series of articles published in CodeProject.com incorporates the following components:
 
 --Face detection component, to detect faces in pics, plotting available using matplotlib.  
 
